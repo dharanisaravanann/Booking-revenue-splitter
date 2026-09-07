@@ -1,6 +1,6 @@
 # Booking Revenue Splitter
 
-A Streamlit web app that converts reservation-level booking data into daily stay entries with revenue calculated per night.
+A Streamlit web app that converts reservation-level booking data into daily stay entries with revenue and fees allocated per night.
 
 ---
 
@@ -8,7 +8,7 @@ A Streamlit web app that converts reservation-level booking data into daily stay
 
 **Booking Revenue Splitter** is a self-service reporting tool built for property managers, hotels, serviced apartments, and operations teams who need to analyse revenue on a per-night basis rather than per-booking. No Python knowledge is needed to use it — upload an Excel file, get a clean Excel file back.
 
-**Note:** the tool expects reservation-level data with defined Arrival, Departure, and Revenue columns (see Required Input Columns below) — it won't work on data that doesn't follow this structure.
+**Note:** only `Reservation Number`, `Arrival`, `Departure`, and `Booking Date` are strictly required in your input file. Revenue and fee columns (see below) are optional — any of them present in your file will be split evenly across nights automatically.
 
 ---
 
@@ -16,18 +16,19 @@ A Streamlit web app that converts reservation-level booking data into daily stay
 
 1. Upload a `.xlsx` reservation file
 2. The app:
-   - Cleans column names
-   - Converts Arrival / Departure / Booking Date to proper date format
-   - Expands each booking into individual stay dates (Arrival → Departure − 1 day)
-   - Computes nightly revenue by dividing Base Revenue and Total Revenue by number of nights
-3. Download the resulting Excel file, which includes two sheets: **Original Data** and **Daily Split Data**
+   - Cleans column names and parses Arrival, Departure, and Booking Date (day-first format)
+   - Expands each booking into one row per stay night (Arrival → Departure − 1 day)
+   - Converts stay dates and booking dates into Excel DATEVALUE format for spreadsheet compatibility
+   - Divides all revenue and fee columns present in the file evenly across the number of nights
+   - Renames split columns to `<Column> per Night` and `Channel` to `Sub Channel`
+3. Download the resulting Excel file, which includes two sheets: **Original Data** and **Reservations Daily Split**
 
 ---
 
 ## System Requirements
 
-- **Python:** 3.9 – 3.12
-- **Dependencies:** Streamlit, Pandas, openpyxl
+- **Python:** 3.9+
+- **Dependencies:** streamlit, pandas, openpyxl
 
 ---
 
@@ -36,7 +37,7 @@ A Streamlit web app that converts reservation-level booking data into daily stay
 **1. Clone the repository**
 
 ```
-git clone https://github.com/dharanisaravanann/booking-revenue-splitter.git
+git clone https://github.com/dharanisaravanann/Booking-revenue-splitter.git
 ```
 
 **2. Install dependencies**
@@ -55,18 +56,18 @@ streamlit run app.py
 
 ## Required Input Columns
 
-Your input file must contain these columns:
+Your input file **must** contain:
 
 - `Reservation Number`
-- `Apartment`
-- `Guest Name`
-- `Channel`
 - `Arrival`
 - `Departure`
 - `Booking Date`
-- `Nights`
-- `Base Revenue`
-- `Total Revenue`
+
+Optional columns, split evenly per night if present:
+
+- `Base Revenue`, `Total Revenue`, `Room Revenue`, `SC on Room Revenue`, `VAT on Room Rev`, `VAT on SC`, `Cleaning Fees Without VAT`, `VAT on Cleaning Fees`, `Tourism Dirham Fees`, `Cleaning Fees`
+
+Also supported (passed through, not split): `Apartment`, `Guest Name`, `Channel`
 
 ---
 
